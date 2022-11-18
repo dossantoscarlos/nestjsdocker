@@ -15,4 +15,19 @@ describe('UsersService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  it('criando novo users', () => {
+    expect(service.create({
+      name:'carlos eduardo',
+      email:'carlos@gmail.com',
+      password:'password'
+    })).toStrictEqual({  
+      name:'carlos eduardo',
+      email:'carlos@gmail.com',
+      password:'password'
+    })
+  })
+
+
+
 });
