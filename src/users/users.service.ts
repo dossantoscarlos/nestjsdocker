@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
+import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UsersService {
 
   create(createUserDto: CreateUserDto) {
-    const users = createUserDto 
+   
+    const hashPassword =  bcrypt.hashSync(createUserDto.password, bcrypt.genSaltSync())
+    createUserDto.password = hashPassword
+    const users = createUserDto
+
     return users;
   }
 

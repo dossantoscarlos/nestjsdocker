@@ -17,15 +17,21 @@ describe('UsersService', () => {
   });
 
   it('criando novo users', () => {
-    expect(service.create({
+    const createUser = service.create({
       name:'carlos eduardo',
       email:'carlos@gmail.com',
       password:'password'
-    })).toStrictEqual({  
+    });
+
+    const user = {  
       name:'carlos eduardo',
       email:'carlos@gmail.com',
       password:'password'
-    })
+    }
+    
+    user.password = createUser.password
+
+    expect(createUser).toStrictEqual(user)
   })
 
 
