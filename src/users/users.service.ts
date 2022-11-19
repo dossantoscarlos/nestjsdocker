@@ -11,18 +11,12 @@ export class UsersService {
   constructor(private prisma: PrismaService){}
 
   async create(createUserDto: CreateUserDto) : Promise<User | null> {
-   
-    const hashPassword =  bcrypt.hashSync(createUserDto.password, bcrypt.genSaltSync())
-    
-    createUserDto.password = hashPassword
-
-    const users: User = await this.prisma.user.create({
+    return await this.prisma.user.create({
       data:{
-        ...createUserDto
+        ...createUserDto,
+        password: bcrypt.hashSync(createUserDto.password, bcrypt.genSaltSync())
       }
     })
-
-    return users;
   }
 
   async findAll(): Promise<User[]|null>{
@@ -37,11 +31,21 @@ export class UsersService {
     });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto):Promise<User|null>{
+     return await this.prisma.user.update({
+      where:{
+        id
+      },
+      data:{
+        ...updateUserDto,
+        password: bcrypt.hashSync(updateUserDto.password, bcrypt.genSaltSync())
+      }
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string): Promise<User|null> {
+    return await this.prisma.user.findFirst({ where: { id }}) !== null ? 
+      await this.prisma.user.delete({ where:{ id } }) 
+      : null;
   }
 }
