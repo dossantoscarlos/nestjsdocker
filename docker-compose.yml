@@ -1,18 +1,5 @@
-version: '3'
-
+version: '3.9'
 services:
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - '3000:3000'
-    container_name: 'api_nest'
-    environment:
-      - NODE_ENV=development
-    depends_on:
-      - pgsql
-
   pgsql:
     image: postgres:alpine
     ports:
@@ -25,12 +12,22 @@ services:
       POSTGRES_USER: pguser
       POSTGRES_PASSWORD: pgpassword
       POSTGRES_DB: nestjs
-
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: "postgresql://pguser:pgpassword@pgsql:5432/nestjs?schema=public"
+    depends_on:
+      - pgsql
+  
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
-
 volumes:
+  api-logs:
   pg-data:

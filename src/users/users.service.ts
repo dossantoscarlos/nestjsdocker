@@ -1,27 +1,40 @@
+import { PrismaService } from './../prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import { User } from '@prisma/client';
+
 @Injectable()
 export class UsersService {
 
-  create(createUserDto: CreateUserDto) {
+  constructor(private prisma: PrismaService){}
+
+  async create(createUserDto: CreateUserDto) : Promise<User | null> {
    
     const hashPassword =  bcrypt.hashSync(createUserDto.password, bcrypt.genSaltSync())
+    
     createUserDto.password = hashPassword
-    const users = createUserDto
+
+    const users: User = await this.prisma.user.create({
+      data:{
+        ...createUserDto
+      }
+    })
 
     return users;
   }
 
-  findAll() {
-    return {
-      
-    };
+  async findAll(): Promise<User[]|null>{
+    return await this.prisma.user.findMany()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) : Promise<User|null> {
+    return await this.prisma.user.findFirst({
+      where:{
+        id
+      }
+    });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
