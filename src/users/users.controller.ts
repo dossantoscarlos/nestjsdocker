@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Res } from '@nestjs/
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Response, response } from 'express';
+import { Response } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -14,29 +14,38 @@ export class UsersController {
   }
 
   @Get()
-  async findAll() {
-    return await this.usersService.findAll();
+  async findAll( @Res() response: Response) {
+    const user = await this.usersService.findAll();
+    return user!== null ? response.status(404).json({
+      message:"Usuarios não encontrado"
+    }) : response.json(user);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return await this.usersService.findOne(id);
+  async findOne(@Param('id') id: string, @Res() response : Response) {
+    const user = await this.usersService.findOne(id);
+    return user !== null ? response.json(user): response.status(404).json({
+      message: "Usuario não encontrado!!!"
+    })
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return await this.usersService.update(id, updateUserDto);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto,@Res() response: Response) {
+    const user = await this.usersService.update(id, updateUserDto);
+    return user !== null ? response.json(user) : response.status(404).json({
+      message: "Usuario não encontrado!!!"
+    })
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string, @Res() response:Response) {
     const user = await this.usersService.remove(id)
     
-    return user === null ? response.status(404).json({
-        message: "Usuario não existe"
-      }) 
-      : response.json({
+    return user !== null ?  response.json({
         message:"Usuario deletado com sucesso!!!"
-      });
+      }):
+      response.status(404).json({
+        message: "Usuario não encontrado!!!"
+      }) ;
   }
 }
