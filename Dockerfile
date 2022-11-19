@@ -12,6 +12,7 @@ COPY . /usr/src/node-api/
 RUN npm install
 RUN npm run build
 RUN npx prisma generate
+
 # instalação dos pacotes para envio de email
 RUN apk add msmtp 
 RUN ln -sf /usr/bin/msmtp /usr/sbin/sendmail
@@ -20,4 +21,4 @@ RUN ln -sf /usr/bin/msmtp /usr/sbin/sendmail
 EXPOSE 3000
 
 # inicializando a API
-CMD [ "npm","run", "start:dev" ]
+CMD [ "npm","run", "start:prod" ]

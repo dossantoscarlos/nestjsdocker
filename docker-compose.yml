@@ -12,22 +12,24 @@ services:
       POSTGRES_USER: pguser
       POSTGRES_PASSWORD: pgpassword
       POSTGRES_DB: nestjs
-  api:
+  pizzaria:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - '3000:3000'
+    container_name: "pizzaria_api"
     environment:
       DATABASE_URL: "postgresql://pguser:pgpassword@pgsql:5432/nestjs?schema=public"
     depends_on:
       - pgsql
-  
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
+      
+  # adminer:
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+  #   container_name: "adminer"
 volumes:
   api-logs:
   pg-data:
